@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-@CommandLine.Command(name = "fnt-processor", version = "fnt-processor 0.0.1",
+@CommandLine.Command(name = "fnt-processor", version = "fnt-processor 0.0.2",
 		description = "Does TextraTypist's preferred modifications to AngelCode BMFont .fnt and .png files.",
 		mixinStandardHelpOptions = true)
 public class HeadlessLauncher implements Callable<Integer> {
