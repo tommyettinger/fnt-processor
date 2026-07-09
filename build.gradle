@@ -1,0 +1,37 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+        gradlePluginPortal()
+        maven { url = 'https://central.sonatype.com/repository/maven-snapshots/' }
+    }
+    dependencies {
+
+    }
+}
+
+allprojects {
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+}
+
+configure(subprojects) {
+    apply plugin: 'java-library'
+    java.sourceCompatibility = "8"
+    compileJava {
+        options.incremental = true
+    }
+}
+
+subprojects {
+    version = '0.0.1-SNAPSHOT'
+    ext.appName = 'fnt-processor'
+    repositories {
+        mavenCentral()
+        maven { url = 'https://central.sonatype.com/repository/maven-snapshots/' }
+        maven { url = 'https://jitpack.io' }
+    }
+}
+
+eclipse.project.name = 'fnt-processor' + '-parent'

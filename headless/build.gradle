@@ -1,0 +1,87 @@
+apply plugin: 'application'
+
+java.sourceCompatibility = 8
+application.mainClass = 'com.github.tommyettinger.headless.HeadlessLauncher'
+eclipse.project.name = appName + '-headless'
+
+dependencies {
+    implementation project(':core')
+    implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    implementation 'info.picocli:picocli:4.7.7'
+    annotationProcessor 'info.picocli:picocli-codegen:4.7.7'
+}
+compileJava.options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
+
+def os = System.properties['os.name'].toLowerCase(Locale.ROOT)
+
+run {
+    jvmArgs += "--enable-native-access=ALL-UNNAMED"
+    if (os.contains('mac')) jvmArgs += "-XstartOnFirstThread"
+}
+
+jar {
+// sets the name of the .jar file this produces to the name of the game or app, with the version after.
+    archiveFileName.set("${appName}.jar")
+// the duplicatesStrategy matters starting in Gradle 7.0; this setting works.
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    dependsOn configurations.runtimeClasspath
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+// these "exclude" lines remove some unnecessary duplicate files in the output JAR.
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+    dependencies {
+        exclude('META-INF/INDEX.LIST', 'META-INF/maven/**')
+    }
+// setting the manifest makes the JAR runnable.
+// enabling native access helps avoid a warning when Java 24 or later runs the JAR.
+// setting Multi-Release to true allows LWJGL3 to use different classes on recent Java versions.
+    manifest {
+        attributes 'Main-Class': application.mainClass, 'Enable-Native-Access': 'ALL-UNNAMED', 'Multi-Release': 'true'
+    }
+// this last step may help on some OSes that need extra instruction to make runnable JARs.
+    doLast {
+        file(archiveFile).setExecutable(true, false)
+    }
+}
+
+// Builds a JAR that only includes the files needed to run on macOS, not Windows or Linux.
+// The file size for a Mac-only JAR is about 7MB smaller than a cross-platform JAR.
+tasks.register("jarMac") {
+    dependsOn("jar")
+    group("build")
+    jar.archiveFileName.set("${appName}-mac.jar")
+    jar.exclude("windows/x86/**", "windows/x64/**", "linux/arm32/**", "linux/arm64/**", "linux/x64/**", "**/*.dll", "**/*.so",
+            'META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+    dependencies {
+        jar.exclude("windows/x86/**", "windows/x64/**", "linux/arm32/**", "linux/arm64/**", "linux/x64/**",
+                'META-INF/INDEX.LIST', 'META-INF/maven/**')
+    }
+}
+
+// Builds a JAR that only includes the files needed to run on Linux, not Windows or macOS.
+// The file size for a Linux-only JAR is about 5MB smaller than a cross-platform JAR.
+tasks.register("jarLinux") {
+    dependsOn("jar")
+    group("build")
+    jar.archiveFileName.set("${appName}-linux.jar")
+    jar.exclude("windows/x86/**", "windows/x64/**", "macos/arm64/**", "macos/x64/**", "**/*.dll", "**/*.dylib",
+            'META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+    dependencies {
+        jar.exclude("windows/x86/**", "windows/x64/**", "macos/arm64/**", "macos/x64/**",
+                'META-INF/INDEX.LIST', 'META-INF/maven/**')
+    }
+}
+
+// Builds a JAR that only includes the files needed to run on Windows, not Linux or macOS.
+// The file size for a Windows-only JAR is about 6MB smaller than a cross-platform JAR.
+tasks.register("jarWin") {
+    dependsOn("jar")
+    group("build")
+    jar.archiveFileName.set("${appName}-win.jar")
+    jar.exclude("macos/arm64/**", "macos/x64/**", "linux/arm32/**", "linux/arm64/**", "linux/x64/**", "**/*.dylib", "**/*.so",
+            'META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+    dependencies {
+        jar.exclude("macos/arm64/**", "macos/x64/**", "linux/arm32/**", "linux/arm64/**", "linux/x64/**",
+                'META-INF/INDEX.LIST', 'META-INF/maven/**')
+    }
+}
