@@ -108,14 +108,14 @@ public class BlockStamper extends ApplicationAdapter {
                     fnt.writeString(text.replaceFirst(
                                     "char id=9608 .+", "char id=9608 x=" + (w - 2) + " y=" + (h - 2) + " width=1 height=1 xoffset=0 yoffset=0 xadvance=1 page=0 chnl=15"),
                             false, "UTF-8");
-                } else if (text.contains("char id=0 ")) {
-                    fnt.writeString(text.replaceFirst(
-                                    "char id=0 .+", "char id=9608 x=" + (w - 2) + " y=" + (h - 2) + " width=1 height=1 xoffset=0 yoffset=0 xadvance=1 page=0 chnl=15"),
-                            false, "UTF-8");
-                } else if (text.contains("char id=-1 ")) {
-                    fnt.writeString(text.replaceFirst(
-                                    "char id=-1 .+", "char id=9608 x=" + (w - 2) + " y=" + (h - 2) + " width=1 height=1 xoffset=0 yoffset=0 xadvance=1 page=0 chnl=15"),
-                            false, "UTF-8");
+//                } else if (text.contains("char id=0 ")) {
+//                    fnt.writeString(text.replaceFirst(
+//                                    "char id=0 .+", "char id=9608 x=" + (w - 2) + " y=" + (h - 2) + " width=1 height=1 xoffset=0 yoffset=0 xadvance=1 page=0 chnl=15"),
+//                            false, "UTF-8");
+//                } else if (text.contains("char id=-1 ")) {
+//                    fnt.writeString(text.replaceFirst(
+//                                    "char id=-1 .+", "char id=9608 x=" + (w - 2) + " y=" + (h - 2) + " width=1 height=1 xoffset=0 yoffset=0 xadvance=1 page=0 chnl=15"),
+//                            false, "UTF-8");
                 } else {
                     Matcher cc = Pattern.compile("chars count=(\\d+)").matcher(text);
                     if(!cc.find()){
@@ -123,7 +123,7 @@ public class BlockStamper extends ApplicationAdapter {
                     }
                     fnt.writeString(text.replaceFirst(
                                     "chars count=\\d+(\\R)", "chars count=" + (Integer.parseInt(cc.group(1)) + 1)
-                                            + "$1char id=9608 x=" + (w - 2) + " y=" + (h - 2) + " width=1 height=1 xoffset=0 yoffset=0 xadvance=1 page=0 chnl=15$2"),
+                                            + "$1char id=9608 x=" + (w - 2) + " y=" + (h - 2) + " width=1 height=1 xoffset=0 yoffset=0 xadvance=1 page=0 chnl=15$1"),
                             false, "UTF-8");
                 }
             }
