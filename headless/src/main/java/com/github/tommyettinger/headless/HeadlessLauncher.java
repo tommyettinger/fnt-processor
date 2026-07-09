@@ -2,7 +2,7 @@ package com.github.tommyettinger.headless;
 
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
-import com.github.tommyettinger.TransparencyProcessor;
+import com.github.tommyettinger.BlockStamper;
 import picocli.CommandLine;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class HeadlessLauncher implements Callable<Integer> {
 	public Integer call() {
 		HeadlessApplicationConfiguration configuration = new HeadlessApplicationConfiguration();
 		configuration.updatesPerSecond = -1;
-		new HeadlessApplication(new TransparencyProcessor(input, false), configuration) {
+		new HeadlessApplication(new BlockStamper(input), configuration) {
 			{
 				try {
 					mainLoopThread.join();

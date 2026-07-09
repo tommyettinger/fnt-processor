@@ -62,7 +62,7 @@ public class TransparencyProcessor extends ApplicationAdapter {
 
     private boolean gray = false;
 
-    public TransparencyProcessor(List<String> args, boolean gray) {
+    public TransparencyProcessor(List<String> args) {
         buffer = new ChunkBuffer(65536);
         deflater = new Deflater(9);
         if(args == null || args.isEmpty()){
@@ -72,7 +72,6 @@ public class TransparencyProcessor extends ApplicationAdapter {
             return;
         }
         parameters = args;
-        this.gray = gray;
     }
 
     @Override
