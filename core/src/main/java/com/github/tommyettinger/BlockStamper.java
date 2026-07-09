@@ -17,6 +17,7 @@
 package com.github.tommyettinger;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
@@ -52,6 +53,20 @@ public class BlockStamper extends ApplicationAdapter {
     public void create() {
         png = new PixmapIO.PNG();
         png.setFlipY(false);
+        if(parameters != null) {
+            for (String name : parameters) {
+                FileHandle fh = Gdx.files.local(name);
+                if (fh.exists())
+                    update(fh);
+                else {
+                    fh = Gdx.files.absolute(name);
+                    if (fh.exists())
+                        update(fh);
+                }
+            }
+        }
+        Gdx.app.exit();
+
     }
     public void update(FileHandle fnt) {
         FileHandle[] children = fnt.parent().list((dir, name) -> name.startsWith(fnt.nameWithoutExtension()) && name.endsWith(".png"));
@@ -60,26 +75,22 @@ public class BlockStamper extends ApplicationAdapter {
             System.out.println("Operating on " + fh.name());
             Pixmap pm = new Pixmap(fh);
             int w = pm.getWidth(), h = pm.getHeight();
-            OUTER:
+            PER_ROW:
+            for (int row = h - 1; row >= 3; row--) {
+                for (int col = 0; col < w; col++) {
+                    int color = pm.getPixel(col, row - 3);
+                    if (!((color & 0xFF) == 0 || (color >>> 8) == 0)){
+                        break PER_ROW;
+                    }
+                }
+                h--;
+            }
             for (int x = w - 3; x < w; x++) {
                 for (int y = h - 3; y < h; y++) {
                     int color = pm.getPixel(x, y);
                     if(color == -1) {
                         System.out.println("Already stamped " + fh.name());
-                        break OUTER;
-                    }
-                    if (!((color & 0xFF) == 0 || (color >>> 8) == 0)) {
-                        for (x = w - 3; x < w; x++) {
-                            for (y = 0; y < 3; y++) {
-                                color = pm.getPixel(x, y);
-                                if (!((color & 0xFF) == 0 || (color >>> 8) == 0)) {
-                                    System.out.println("Had a transparency problem with " + fh.name());
-                                    continue PER_CHILD;
-                                }
-                            }
-                        }
-                        h = 3;
-                        break OUTER;
+                        continue PER_CHILD;
                     }
                 }
             }
