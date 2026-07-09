@@ -131,6 +131,5 @@ public class BlockStamper extends ApplicationAdapter {
                 }
             }
         }
-        System.exit(0);
     }
 }
