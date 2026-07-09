@@ -69,7 +69,7 @@ public class BlockStamper extends ApplicationAdapter {
 
     }
     public void update(FileHandle fnt) {
-        FileHandle[] children = fnt.parent().list((dir, name) -> name.startsWith(fnt.nameWithoutExtension()) && name.endsWith(".png"));
+        FileHandle[] children = fnt.parent().list((dir, name) -> name.equals(fnt.nameWithoutExtension() + ".png"));
         PER_CHILD:
         for(FileHandle fh : children) {
             System.out.println("Operating on " + fh.name());
