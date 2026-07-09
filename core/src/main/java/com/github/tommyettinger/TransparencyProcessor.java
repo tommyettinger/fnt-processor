@@ -92,7 +92,7 @@ public class TransparencyProcessor extends ApplicationAdapter {
         Gdx.app.exit();
     }
 
-    private void rewrite (FileHandle file) {
+    public void rewrite (FileHandle file) {
         if(!file.exists()) {
             System.out.println("The specified file " + file + " does not exist; skipping.");
             return;

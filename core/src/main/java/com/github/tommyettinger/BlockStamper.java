@@ -23,6 +23,8 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -98,6 +100,7 @@ public class BlockStamper extends ApplicationAdapter {
             pm.fillRectangle(w - 3, h - 3, 3, 3);
             try {
                 png.write(fh, pm);
+                new TransparencyProcessor(Collections.singletonList(fh.path())).rewrite(fh);
             } catch (IOException e) {
                 System.out.println("Had a file IO problem with " + fh.name());
                 e.printStackTrace();
